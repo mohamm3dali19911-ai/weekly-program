@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>برنامجي الأسبوعي</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap">
+<style>
+:root{--bg:#f2f4f1;--surface:#fff;--ink:#14202b;--mute:#5d6b75;--line:#d9dfda;--accent:#0f766e;--onacc:#fff;--hot:#e8a317;--hotbg:#fff4d6;--board:#14202b;--boardink:#f2f4f1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d151c;--surface:#16212a;--ink:#eef2ef;--mute:#9aa8b2;--line:#27343e;--accent:#2dd4bf;--onacc:#04201c;--hotbg:#3a2f10;--board:#070d12;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d151c;--surface:#16212a;--ink:#eef2ef;--mute:#9aa8b2;--line:#27343e;--accent:#2dd4bf;--onacc:#04201c;--hotbg:#3a2f10;--board:#070d12;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Readex Pro",Tahoma,Arial,sans-serif;display:flex;flex-direction:column}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+.screen{flex:1;min-height:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+.scroll{overflow-y:auto;flex:1;min-height:0}
+:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+
+/* bottom nav */
+nav{display:flex;border-top:1px solid var(--line);background:var(--surface);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav a{flex:1;text-align:center;padding:12px 4px;text-decoration:none;color:var(--mute);font-size:14px}
+nav a.on{color:var(--accent);font-weight:700;box-shadow:inset 0 3px 0 var(--accent)}
+
+/* screen 1 */
+.half{flex:1;min-height:0;display:flex;flex-direction:column}
+.half+.half{border-top:2px dashed var(--line)}
+.head{background:var(--board);color:var(--boardink);padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.day{font-size:clamp(28px,8vw,44px);font-weight:700;line-height:1.1}
+.date{font-weight:300;opacity:.85;font-size:15px;margin-top:4px}
+.per{font-size:13px;color:var(--hot);text-align:left}.clk{font-size:30px;font-weight:300;direction:ltr;color:var(--hot);font-variant-numeric:tabular-nums;line-height:1.1}
+.sub{padding:10px 18px;background:var(--hotbg);font-weight:600;font-size:15px}
+.hint{color:var(--mute);font-weight:400;font-size:13px;display:block;margin-top:2px}
+.list{padding:0 14px}
+.it{display:flex;gap:14px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.it .t{min-width:64px;font-weight:700;color:var(--accent)}.it .v{flex:1;word-break:break-word}
+.it b{font-weight:600;display:block}
+.it small{color:var(--mute);display:block;margin-top:2px}
+.it.now{background:var(--hotbg);box-shadow:inset -5px 0 0 var(--hot)}
+.it.past{opacity:.45}
+.tag{background:var(--hot);color:#14202b;border-radius:99px;font-size:11px;padding:1px 8px;margin-inline-start:6px;font-weight:700}
+.empty{text-align:center;color:var(--mute);padding:26px 12px}
+
+/* admin */
+.pad{padding:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:16px}
+label.l{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+select,input[type=text],input[type=time]{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.days{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.days label{background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:14px;cursor:pointer}
+.days input{margin-inline-end:5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer}
+.btn.p{background:var(--accent);color:var(--onacc);border-color:var(--accent);font-weight:600}
+.btn.d{color:#c0362c}
+.hide{display:none!important}
+.msg{min-height:18px;font-size:13px;color:var(--accent);margin-top:6px}
+.dh{font-weight:700;padding:10px 0 4px;color:var(--accent)}
+#bg{position:fixed;inset:0;z-index:0;opacity:.2;background-size:cover;background-position:center;pointer-events:none;display:flex;align-items:flex-end;justify-content:center}#bg svg{width:min(100%,520px);height:auto;margin-bottom:60px}main,nav{position:relative;z-index:1}.chk{display:flex;gap:8px}.chk label{flex:1;text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;cursor:pointer}.chk input{margin-inline-end:6px}.fld{margin-top:8px}.sw{position:relative;display:inline-block;width:52px;height:28px;flex-shrink:0}.sw input{opacity:0;width:100%;height:100%;margin:0;position:absolute;inset:0;cursor:pointer;z-index:1}.sw i{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.2s}.sw i::after{content:'';position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}.sw input:checked+i{background:var(--accent)}.sw input:checked+i::after{right:27px}.sw input:focus-visible+i{outline:3px solid var(--hot)}.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.ch h2{margin:0}.st{font-size:13px;color:var(--mute)}.btn.ok{background:var(--hot);color:#14202b;border-color:var(--hot);font-weight:700}.ai{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.ai span{color:var(--mute);font-size:13px;display:block}
+.ai .acts{display:flex;gap:6px;flex-shrink:0}
+
+/* week */
+.wd{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.wd h3{margin:0;padding:8px 14px;background:var(--line);font-size:15px;display:flex;justify-content:space-between}
+.wd.today h3{background:var(--hot);color:#14202b}
+</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"><svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+<line x1="40" y1="238" x2="270" y2="232" stroke="#6b4a2b" stroke-width="7" stroke-linecap="round"/>
+<line x1="138" y1="205" x2="138" y2="236" stroke="#8a6a4a" stroke-width="4"/><line x1="162" y1="207" x2="162" y2="235" stroke="#8a6a4a" stroke-width="4"/>
+<polygon points="212,168 292,198 282,210 205,190" fill="#1b1b1b"/>
+<ellipse cx="150" cy="160" rx="72" ry="48" fill="#c9a37a"/>
+<ellipse cx="122" cy="182" rx="40" ry="22" fill="#fff"/>
+<ellipse cx="156" cy="152" rx="44" ry="26" fill="#1b1b1b" transform="rotate(-14 156 152)"/>
+<ellipse cx="156" cy="146" rx="32" ry="8" fill="#f2c200" transform="rotate(-14 156 146)"/>
+<circle cx="92" cy="112" r="36" fill="#fff"/>
+<path d="M58 106a36 36 0 0 1 70-4q-25-10-70 4z" fill="#1b1b1b"/>
+<ellipse cx="78" cy="122" rx="20" ry="17" fill="#d62828"/>
+<polygon points="52,120 34,127 53,134" fill="#f0d9b5"/>
+<circle cx="86" cy="112" r="3.5" fill="#111"/>
+</svg></div>
+<main>
+<!-- 1: today -->
+<section class="screen" id="s-today">
+  <div class="half">
+    <div class="head"><div><div class="day" id="tDay"></div><div class="date" id="tDate"></div></div><div><div class="clk" id="tClk"></div><div class="per" id="tPer"></div></div></div>
+    <div class="scroll list" id="tList"></div>
+  </div>
+  <div class="half">
+    <div class="sub" id="nHead"></div>
+    <div class="scroll list" id="nList"></div>
+  </div>
+</section>
+
+<!-- 2: control panel -->
+<section class="screen" id="s-admin"><div class="scroll pad">
+  <div class="card">
+    <label class="l" for="sel">الجدول المراد عرضه وتعديله</label>
+    <select id="sel"></select>
+  </div>
+  <div class="card">
+    <label class="l" for="bgf">صورة الخلفية (اختياري)</label>
+    <input type="file" id="bgf" accept="image/*">
+    <div class="row"><button class="btn" id="bgx">إزالة الصورة واستعمال رسم الحسون</button></div>
+  </div>
+  <div id="days"></div>
+  <div class="msg" id="msg" role="status"></div>
+</div></section>
+
+<!-- 3: week -->
+<section class="screen" id="s-week"><div class="scroll pad">
+  <div class="card" style="margin-bottom:10px"><b id="wName"></b></div>
+  <div id="wBody"></div>
+</div></section>
+</main>
+<nav>
+  <a href="#today" data-s="today">اليوم</a>
+  <a href="#admin" data-s="admin">لوحة التحكم</a>
+  <a href="#week" data-s="week">الأسبوع</a>
+</nav>
+
+<script>
+(function(){
+var KEY="weekly-program-v2";
+var DAYS=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+var ORDER=[6,0,1,2,3,4,5];
+var NAMES={molt:"فترة غيار الريش",prep:"فترة التجهيز",breed:"فترة التزاوج والتفريخ"};
+var data={active:"molt",fmt:"24",molt:{},prep:{},breed:{}};
+var $=function(i){return document.getElementById(i)};
+function load(){try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&d.molt)data=d}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+function pad(n){return n<10?"0"+n:""+n}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function entry(d){return data[data.active][d]||{}}
+function rows(e){
+  if(e.off)return '<div class="empty">هذا اليوم غير مفعّل</div>';
+  var h="";
+  if(e.t)h+='<div class="it"><div class="t">الوقت</div><div class="v" style="direction:ltr;text-align:right">'+fmtT(e.t,e.tf)+'</div></div>';
+  if(e.w)h+='<div class="it"><div class="t">الماء</div><div class="v">'+esc(e.w)+'</div></div>';
+  if(e.f)h+='<div class="it"><div class="t">العلف</div><div class="v">'+esc(e.f)+'</div></div>';
+  [e.a,e.b,e.c].forEach(function(x){if(x)h+='<div class="it"><div class="t"></div><div class="v">'+esc(x)+'</div></div>'});
+  return h||'<div class="empty">لا يوجد برنامج لهذا اليوم</div>';
+}
+function fmtT(t,f){
+  if(f!=="12")return t;
+  var h=+t.slice(0,2);return (h%12||12)+":"+t.slice(3,5)+" "+(h<12?"ص":"م");
+}
+function clock(n){
+  var f=entry(n.getDay()).tf||"24";
+  return fmtT(pad(n.getHours())+":"+pad(n.getMinutes()),f);
+}
+var fDay=new Intl.DateTimeFormat("ar-LY",{weekday:"long"});
+var fDate=new Intl.DateTimeFormat("ar-LY-u-nu-latn",{day:"numeric",month:"long",year:"numeric"});
+function renderToday(){
+  var n=new Date(), t=new Date(n.getTime()+864e5);
+  $("tDay").textContent=fDay.format(n);$("tDate").textContent=fDate.format(n);$("tPer").textContent=NAMES[data.active];
+  $("tClk").textContent=clock(n);
+  $("tList").innerHTML=rows(entry(n.getDay()));
+  $("nHead").innerHTML='جهّز برنامج الغد: '+fDay.format(t)+'<span class="hint">'+NAMES[data.active]+'</span>';
+  $("nList").innerHTML=rows(entry(t.getDay()));
+}
+
+function buildAdmin(){
+  $("sel").innerHTML=Object.keys(NAMES).map(function(k){return '<option value="'+k+'">'+NAMES[k]+'</option>'}).join("");
+}
+function flash(t){$("msg").textContent=t;setTimeout(function(){$("msg").textContent=""},2500)}
+function renderAdmin(){
+  $("sel").value=data.active;
+  $("days").innerHTML=ORDER.map(function(d){
+    var e=entry(d);
+    return '<div class="card" data-d="'+d+'"><div class="ch"><h2>'+DAYS[d]+'</h2><div style="display:flex;gap:8px;align-items:center"><span class="st">'+(e.off?"متوقف":"مفعّل")+'</span><label class="sw"><input type="checkbox" data-on="'+d+'" aria-label="تفعيل '+DAYS[d]+'"'+(e.off?"":" checked")+'><i></i></label></div></div>'
+    +'<div class="g2" style="margin:0 0 8px"><div><label class="l">الوقت</label><input type="time" data-k="t" value="'+esc(e.t||"")+'"></div>'
+    +'<div><label class="l">نظام الساعة</label><select data-k="tf"><option value="24"'+(e.tf!=="12"?" selected":"")+'>24 ساعة</option><option value="12"'+(e.tf==="12"?" selected":"")+'>12 ساعة</option></select></div></div>'
+    +'<label class="l">الماء</label><input type="text" data-k="w" value="'+esc(e.w||"")+'">'
+    +'<label class="l fld">العلف</label><input type="text" data-k="f" value="'+esc(e.f||"")+'">'
+    +'<input class="fld" type="text" data-k="a" aria-label="خانة 3" value="'+esc(e.a||"")+'">'
+    +'<input class="fld" type="text" data-k="b" aria-label="خانة 4" value="'+esc(e.b||"")+'">'
+    +'<input class="fld" type="text" data-k="c" aria-label="خانة 5" value="'+esc(e.c||"")+'">'
+    +'<div class="row"><button class="btn p" data-save="'+d+'">حفظ</button><button class="btn d" data-clear="'+d+'">مسح اليوم</button></div></div>';
+  }).join("");
+}
+$("sel").onchange=function(){data.active=$("sel").value;save();renderAdmin()};
+var BG="weekly-program-bg";
+function applyBg(){
+  var u=null;try{u=localStorage.getItem(BG)}catch(e){}
+  $("bg").style.backgroundImage=u?"url("+u+")":"";
+  $("bg").querySelector("svg").style.display=u?"none":"";
+}
+$("bgf").onchange=function(){
+  var f=this.files[0];if(!f)return;
+  var img=new Image(),r=new FileReader();
+  r.onload=function(){img.onload=function(){
+    var k=Math.min(1,900/Math.max(img.width,img.height)),c=document.createElement("canvas");
+    c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    try{localStorage.setItem(BG,c.toDataURL("image/jpeg",0.7));flash("تم تعيين الصورة.")}catch(e){flash("تعذر حفظ الصورة.")}
+    applyBg();};img.src=r.result};
+  r.readAsDataURL(f);
+};
+$("bgx").onclick=function(){try{localStorage.removeItem(BG)}catch(e){}applyBg();$("bgf").value=""};
+$("days").onclick=function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.save){
+    var card=b.closest(".card"),o={};
+    Array.prototype.forEach.call(card.querySelectorAll("input:not([type=checkbox]),select"),function(i){var v=i.value.trim();if(v)o[i.dataset.k]=v;});
+    if(!card.querySelector("[data-on]").checked)o.off=true;data[data.active][b.dataset.save]=o;save();flash("✔ تم حفظ "+DAYS[+b.dataset.save]+".");b.textContent="✔ تم الحفظ";b.classList.add("ok");setTimeout(function(){b.textContent="حفظ";b.classList.remove("ok")},2000);
+  }
+  if(b.dataset.clear&&confirm("مسح بيانات هذا اليوم؟")){delete data[data.active][b.dataset.clear];save();renderAdmin()}
+};
+
+$("days").onchange=function(e){var t=e.target;if(!t.dataset.on)return;var d=t.dataset.on,n=Object.assign({},entry(d));if(t.checked)delete n.off;else n.off=true;data[data.active][d]=n;save();t.closest(".ch").querySelector(".st").textContent=t.checked?"مفعّل":"متوقف";flash((t.checked?"تم تفعيل ":"تم إيقاف ")+DAYS[+d]+".")};
+
+function renderWeek(){
+  $("wName").textContent=NAMES[data.active];
+  var td=new Date().getDay();
+  $("wBody").innerHTML=ORDER.map(function(d){
+    return '<div class="wd'+(d===td?' today':'')+'"><h3><span>'+DAYS[d]+'</span><span>'+(d===td?'اليوم':'')+'</span></h3><div class="list">'+rows(entry(d))+'</div></div>';
+  }).join("");
+}
+
+function route(){
+  var s=(location.hash||"#today").slice(1);if(["today","admin","week"].indexOf(s)<0)s="today";
+  ["today","admin","week"].forEach(function(k){$("s-"+k).classList.toggle("on",k===s)});
+  Array.prototype.forEach.call(document.querySelectorAll("nav a"),function(a){a.classList.toggle("on",a.dataset.s===s)});
+  if(s==="today")renderToday();else if(s==="admin")renderAdmin();else renderWeek();
+}
+window.addEventListener("hashchange",route);
+window.addEventListener("storage",function(e){if(e.key===KEY){load();route()}});
+buildAdmin();load();applyBg();route();
+setInterval(function(){if((location.hash||"#today")==="#today")renderToday()},15000);
+})();
+</script>
+</body>
+</html>
