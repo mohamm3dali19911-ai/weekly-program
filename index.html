@@ -68,6 +68,52 @@ select,input[type=text],input[type=time]{width:100%;font:inherit;padding:10px;bo
 .wd{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
 .wd h3{margin:0;padding:8px 14px;background:var(--line);font-size:15px;display:flex;justify-content:space-between}
 .wd.today h3{background:var(--hot);color:#14202b}
+/* modern theme */
+:root{--bg:#eceff3;--surface:#fff;--ink:#16181d;--mute:#6a7280;--line:#e1e5ea;--accent:#c8372d;--onacc:#fff;--hot:#f5c518;--hotbg:#fff7d6;--board:#17181c;--boardink:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--surface:#1a1d23;--ink:#f2f3f5;--mute:#9aa1ad;--line:#2a2e36;--accent:#ff6b5e;--onacc:#1a0604;--hotbg:#2b2614;--board:#0a0b0d;--boardink:#f2f3f5}}
+:root[data-theme="dark"]{--bg:#101216;--surface:#1a1d23;--ink:#f2f3f5;--mute:#9aa1ad;--line:#2a2e36;--accent:#ff6b5e;--onacc:#1a0604;--hotbg:#2b2614;--board:#0a0b0d;--boardink:#f2f3f5}
+body{font-size:16px}
+.scroll{padding-bottom:104px}
+#bg{opacity:.45}
+#bg svg{width:min(100%,640px)}
+.it,.card,.wd{background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.wd .it{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.half+.half{border:0}
+.head{position:relative;overflow:hidden;margin:12px 12px 4px;padding:20px 24px;border-radius:28px;align-items:center}
+.head::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:9px;background:var(--hot)}
+.day{font-size:clamp(32px,9vw,48px)}
+.date{font-size:15px;opacity:.75}
+.clk{font-size:34px;font-weight:600;color:var(--hot)}
+.per{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:99px;background:rgba(255,255,255,.14);color:var(--boardink);font-size:12px}
+.sub{background:none;padding:14px 22px 4px;font-size:17px;font-weight:700}
+.hint{display:inline;margin-inline-start:8px;font-size:13px}
+.list{padding:6px 12px 12px}
+.it{align-items:center;gap:14px;background:var(--surface);border:0;border-radius:20px;padding:12px 14px;margin-bottom:8px}
+.it i{font-style:normal;flex-shrink:0;width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-size:21px;background:var(--line)}
+.k-w i{background:rgba(56,140,255,.18)}.k-f i{background:rgba(245,197,24,.24)}.k-t i{background:rgba(200,55,45,.16)}
+.lb{display:block;font-size:12px;color:var(--mute);margin-bottom:1px}
+.it .v{font-size:16px;font-weight:500;line-height:1.55}
+.empty{padding:22px 12px}
+nav{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(92%,420px);gap:4px;padding:5px;border:1px solid var(--line);border-radius:99px;background:color-mix(in srgb,var(--surface) 80%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:5}
+nav a{padding:11px 4px;border-radius:99px;font-size:14px}
+nav a.on{background:var(--accent);color:var(--onacc);box-shadow:none}
+.card{border:0;border-radius:24px;padding:18px}
+.card h2{font-size:17px}
+select,input[type=text],input[type=time]{padding:12px 14px;border:1.5px solid var(--line);border-radius:14px}
+select:focus,input:focus{outline:0;border-color:var(--accent)}
+.btn{border:0;border-radius:14px;padding:11px 16px;background:var(--line)}
+.btn.p{background:var(--accent);color:var(--onacc)}
+.btn.d{background:none;color:var(--accent)}
+.days label{border:0;background:var(--line)}
+.wd{border:0;border-radius:24px}
+.wd h3{background:none;padding:14px 18px 2px;font-size:17px}
+.wd h3 span:last-child{background:var(--hot);color:#17181c;border-radius:99px;padding:0 10px;font-size:12px;line-height:22px}
+.wd h3 span:empty{display:none}
+.wd.today{box-shadow:0 0 0 2px var(--hot)}
+.wd.today h3{background:none;color:var(--ink)}
+.wd .it{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.it{background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.wd .it{background:color-mix(in srgb,var(--bg) 70%,transparent)}
 </style>
 </head>
 <body>
@@ -102,7 +148,7 @@ select,input[type=text],input[type=time]{width:100%;font:inherit;padding:10px;bo
 <section class="screen" id="s-admin"><div class="scroll pad">
   <div class="card">
     <label class="l" for="sel">الجدول المراد عرضه وتعديله</label>
-    <select id="sel"></select>
+    <select id="sel"></select><div class="row"><button class="btn" id="rst">استعادة الجدول المقترح لهذه الفترة</button></div>
   </div>
   <div class="card">
     <label class="l" for="bgf">صورة الخلفية (اختياري)</label>
@@ -130,10 +176,19 @@ select,input[type=text],input[type=time]{width:100%;font:inherit;padding:10px;bo
 var KEY="weekly-program-v2";
 var DAYS=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
 var ORDER=[6,0,1,2,3,4,5];
-var NAMES={molt:"فترة غيار الريش",prep:"فترة التجهيز",breed:"فترة التزاوج والتفريخ"};
-var data={active:"molt",fmt:"24",molt:{},prep:{},breed:{}};
+var NAMES={prep:"فترة التجهيز",molt:"فترة غيار الريش",incubate:"فترة الحضن",hatch:"فترة التفريخ",rest:"فترة الراحة"};
+var W={n:"ماء نظيف",f:"فيرتي فيت (1 غرام / 250 مل ماء)",m:"موتا فيت (1 غرام / 250 مل ماء)",c:"كالسيوم + كولين (5 قطرات / 250 مل ماء)"};
+var FE=["باتي + تفاح (بلا بذور)","تمر صغير منزوع النوى + جرجير أو مورينجا","خلطة المكسرات (قليلة) + التيفاف","باتي + تفاح (بلا بذور)","خلطة المكسرات (قليلة) + رجلة أو قريص","بيضة مسلوقة + بريد ماكس (حسب العبوة) + فلفل حار صغير + التيفاف","خلطة المكسرات (قليلة) + التيفاف"];
+var FI=["باتي + تفاح (بلا بذور)","تمر صغير منزوع النوى + جرجير أو مورينجا","باتي + خلطة المكسرات (قليلة) + التيفاف","تفاح + خلطة المكسرات (قليلة)","باتي + رجلة أو قريص","بيضة مسلوقة + بريد ماكس (حسب العبوة) + فلفل حار صغير + التيفاف","خلطة المكسرات (قليلة) + التيفاف"];
+var FH=["باتي طازج + تفاح (بلا بذور)","باتي طازج + بيضة مسلوقة + جرجير","باتي طازج + خلطة مطحونة ناعماً + التيفاف","باتي طازج + تفاح (بلا بذور)","باتي طازج + رجلة أو قريص","باتي طازج + بيضة مسلوقة + بريد ماكس (حسب العبوة) + التيفاف","باتي طازج + خلطة مطحونة ناعماً + التيفاف"];
+var FR=["باتي (قليل) + تفاح","تمر صغير + جرجير","خلطة المكسرات (قليلة جداً) + التيفاف","تفاح + رجلة","مورينجا + التيفاف","فلفل حار صغير + التيفاف","خلطة المكسرات (قليلة جداً) + قريص"];
+function mk(w,f,c){var o={};for(var d=0;d<7;d++)o[d]={w:W[w.charAt(d)],f:f[d],a:"بدّل الماء كل 6-8 ساعات في الحر",b:"أزل بقايا الباتي والبيض والخضار بعد 2-3 ساعات",c:c};return o}
+var DEF={prep:mk("ncnnnnf",FE,"عظمة الحبار دائماً في القفص"),molt:mk("ncnmnnm",FE,"أبقِ الطيور هادئة وتجنب الإزعاج أثناء الريش"),incubate:mk("ncnfnnf",FI,"لا تُدخل أصنافاً جديدة وقت الحضن"),hatch:mk("ncnncnf",FH,"باتي طازج بكميات صغيرة، وأزل الباقي بسرعة"),rest:mk("ncnnnnn",FR,"فترة راحة: بلا مكملات فيتامينية")};
+function has(o){return o&&Object.keys(o).length>0}
+function seed(){var ch=0;if(has(data.breed)&&!has(data.incubate)){data.incubate=data.breed;ch=1}delete data.breed;Object.keys(DEF).forEach(function(k){if(!has(data[k])){data[k]=JSON.parse(JSON.stringify(DEF[k]));ch=1}});if(!NAMES[data.active]){data.active="prep";ch=1}if(ch)save()}
+var data={active:"prep",fmt:"24"};
 var $=function(i){return document.getElementById(i)};
-function load(){try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&d.molt)data=d}}catch(e){}}
+function load(){try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&typeof d==="object")data=d}}catch(e){}seed()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
 function pad(n){return n<10?"0"+n:""+n}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -141,10 +196,10 @@ function entry(d){return data[data.active][d]||{}}
 function rows(e){
   if(e.off)return '<div class="empty">هذا اليوم غير مفعّل</div>';
   var h="";
-  if(e.t)h+='<div class="it"><div class="t">الوقت</div><div class="v" style="direction:ltr;text-align:right">'+fmtT(e.t,e.tf)+'</div></div>';
-  if(e.w)h+='<div class="it"><div class="t">الماء</div><div class="v">'+esc(e.w)+'</div></div>';
-  if(e.f)h+='<div class="it"><div class="t">العلف</div><div class="v">'+esc(e.f)+'</div></div>';
-  [e.a,e.b,e.c].forEach(function(x){if(x)h+='<div class="it"><div class="t"></div><div class="v">'+esc(x)+'</div></div>'});
+  if(e.t)h+='<div class="it k-t"><i>🕒</i><div class="v"><span class="lb">الوقت</span><span style="direction:ltr;display:inline-block">'+fmtT(e.t,e.tf)+'</span></div></div>';
+  if(e.w)h+='<div class="it k-w"><i>💧</i><div class="v"><span class="lb">الماء</span>'+esc(e.w)+'</div></div>';
+  if(e.f)h+='<div class="it k-f"><i>🌾</i><div class="v"><span class="lb">العلف</span>'+esc(e.f)+'</div></div>';
+  [e.a,e.b,e.c].forEach(function(x){if(x)h+='<div class="it k-n"><i>📝</i><div class="v">'+esc(x)+'</div></div>'});
   return h||'<div class="empty">لا يوجد برنامج لهذا اليوم</div>';
 }
 function fmtT(t,f){
@@ -186,6 +241,7 @@ function renderAdmin(){
   }).join("");
 }
 $("sel").onchange=function(){data.active=$("sel").value;save();renderAdmin()};
+$("rst").onclick=function(){if(confirm("استعادة الجدول المقترح لهذه الفترة؟ سيُستبدل ما أدخلته فيها.")){data[data.active]=JSON.parse(JSON.stringify(DEF[data.active]));save();renderAdmin();flash("✔ تمت الاستعادة.")}};
 var BG="weekly-program-bg";
 function applyBg(){
   var u=null;try{u=localStorage.getItem(BG)}catch(e){}
